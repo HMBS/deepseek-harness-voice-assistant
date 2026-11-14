@@ -1,10 +1,10 @@
-# Voice Gadget — a small purpose-built DeepSeek voice assistant for the
+# DeepSeek Harness Voice Assistant: a small purpose-built assistant for the
 # Waveshare ESP32-S3-Touch-AMOLED-2.16.
 #
 # Press BOOT, speak, release: the board records, sends the audio to a small
 # relay on the host for Deepgram speech-to-text, asks DeepSeek, and speaks the
 # answer back through Deepgram text-to-speech. No agent framework, no Lua, no
-# skill system — just one loop.
+# skill system, just one loop.
 
 CONFIG_IDF_TARGET="esp32s3"
 

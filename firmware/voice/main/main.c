@@ -1,4 +1,4 @@
-/* Voice Gadget — a purpose-built DeepSeek voice assistant for the
+/* DeepSeek Harness Voice Assistant: a purpose-built voice assistant for the
  * Waveshare ESP32-S3-Touch-AMOLED-2.16.
  *
  * One loop, no agent framework:

@@ -1,12 +1,12 @@
-# DeepSeek Voice Gadget
+# DeepSeek Harness Voice Assistant
 
-![DeepSeek Voice Gadget](assets/hero.png)
+![DeepSeek Harness Voice Assistant](assets/hero.png)
 
 A small, purpose-built voice assistant for the **Waveshare ESP32-S3-Touch-AMOLED-2.16**
 (ESP32-S3R8, 16 MB flash, 8 MB PSRAM).
 
 Hold the left button, speak, release. The gadget records, transcribes, asks
-DeepSeek (or your own local harness), and speaks the answer out loud — with an
+DeepSeek (or your own local harness), and speaks the answer out loud, with an
 animated mascot that reacts to each state.
 
 No agent framework on the MCU, no Lua runtime, no skill system. One firmware
@@ -16,7 +16,7 @@ loop and one small host relay.
 
 ## Features
 
-- **Push-to-talk** — recording starts on press, stops 0.4 s after release.
+- **Push-to-talk**: recording starts on press, stops 0.4 s after release.
 - **Deepgram** speech-to-text and text-to-speech, with mic gain handled host-side.
 - **DeepSeek** answers, directly or through a local `dsh` harness.
 - **Animated mascot** with four poses (idle, listening, thinking, speaking).
@@ -92,15 +92,15 @@ endpoint for speech and chat.
 ### 2. Clone and configure
 
 ```sh
-git clone https://github.com/HMBS/deepseek-voice-gadget.git
-cd deepseek-voice-gadget
+git clone https://github.com/HMBS/deepseek-harness-voice-assistant.git
+cd deepseek-harness-voice-assistant
 
 cp firmware/voice/main/secrets.example.h firmware/voice/main/secrets.h
 $EDITOR firmware/voice/main/secrets.h
 ```
 
 Fill in Wi-Fi (2.4 GHz), the relay URL (your computer's LAN IP), and keys.
-`secrets.h` is gitignored — never commit it.
+`secrets.h` is gitignored, so never commit it.
 
 ### 3. Run the relay
 
@@ -217,7 +217,7 @@ These cost real debugging time; they are worth knowing if you fork this:
   `read` manually.
 - **TLS needs PSRAM.** Internal RAM is too tight for mbedTLS working buffers, so
   `CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y`; the DeepSeek call runs on a 16 KB stack.
-- **Never apply gain to a WAV file as a whole** — it corrupts the RIFF header and
+- **Never apply gain to a WAV file as a whole**: it corrupts the RIFF header and
   Deepgram rejects it as "corrupt or unsupported data". Gain the PCM, rebuild the
   header.
 - **Watch the I2S DMA.** Streaming TTS from Deepgram arrives slower than
@@ -242,4 +242,4 @@ These cost real debugging time; they are worth knowing if you fork this:
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
