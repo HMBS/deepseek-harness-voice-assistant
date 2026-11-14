@@ -213,6 +213,7 @@ class Handler(BaseHTTPRequestHandler):
     gain = 4.0
     dsh_bin = ""
     dsh_cwd = ""
+    dsh_profile = "headless"
     dsh_timeout = HARNESS_TIMEOUT
 
     def log_message(self, *_args) -> None:
@@ -361,7 +362,7 @@ class Handler(BaseHTTPRequestHandler):
         log(f"chat: harness task ({len(task)} chars)", flush=True)
         try:
             proc = subprocess.run(
-                [self.dsh_bin, "--profile", "headless",
+                [self.dsh_bin, "--profile", self.dsh_profile,
                  "--approval-policy", "never", "-"],
                 input=task, capture_output=True, text=True,
                 timeout=self.dsh_timeout,
@@ -475,6 +476,8 @@ def main() -> int:
     ap.add_argument("--deepseek-key", default=os.environ.get("DEEPSEEK_API_KEY", ""))
     ap.add_argument("--dsh-bin", default=find_dsh())
     ap.add_argument("--dsh-cwd", default="")
+    ap.add_argument("--dsh-profile", default="headless",
+                    help="dsh profile used for voice answers (default: headless)")
     ap.add_argument("--dsh-timeout", type=int, default=HARNESS_TIMEOUT)
     args = ap.parse_args()
 
@@ -487,8 +490,10 @@ def main() -> int:
     Handler.gain = args.gain
     Handler.dsh_bin = args.dsh_bin
     Handler.dsh_cwd = args.dsh_cwd
+    Handler.dsh_profile = args.dsh_profile
     Handler.dsh_timeout = args.dsh_timeout
-    log(f"harness: {args.dsh_bin} (timeout {args.dsh_timeout}s)")
+    log(f"harness: {args.dsh_bin} profile={args.dsh_profile} "
+        f"(timeout {args.dsh_timeout}s)")
 
     server = ThreadingHTTPServer(("0.0.0.0", args.port), Handler)
     log(f"voice relay on :{args.port} (gain {args.gain}x)", flush=True)

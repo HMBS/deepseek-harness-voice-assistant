@@ -163,11 +163,75 @@ once per question. That makes a harness bound to `127.0.0.1:3080` reachable from
 the board without exposing it to the LAN. Each question is a fresh headless run,
 so it does not share the web session's history.
 
+### Locking down the harness
+
+The stock `headless` profile runs in a read-only sandbox, but **read-only still
+allows reading files outside the working directory**. Ask it to list your
+Downloads folder and it will happily read the names aloud. For a voice device
+that is an always-listening surface, create a tool-free profile instead:
+
+```sh
+cp -r ~/.dsh/profiles/headless ~/.dsh/profiles/voice
+```
+
+Set the profile's `package.json` name to `dsh-profile-voice`, then replace
+`~/.dsh/profiles/voice/cordis.patch.yml` with:
+
+```yaml
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: web-fetch-http
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: skill-filesystem
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: workflow-ptc
+  disabled: true
+- id: tool-todo
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-plugin-manager
+  disabled: true
+```
+
+Keep `tools`, `tool-executor-native`, and `tool-working-directory` enabled:
+the agent loop will not start without the first two, and disabling the last one
+makes the model emit raw tool-call text. The result is a profile that can still
+change directory but has no way to list or read files.
+
+Run the relay with:
+
+```sh
+DSH_PERMISSION_MODE=read-only python3 relay/stt_relay.py --port 8799 --gain 12 \
+    --dsh-profile voice --dsh-cwd /tmp/empty-scratch
+```
+
 The relay flags:
 
 ```sh
 --deepseek-key KEY   # passed to the child harness as DEEPSEEK_API_KEY
 --dsh-bin PATH       # default: newest ~/.npm/_npx/*/node_modules/.bin/dsh
+--dsh-profile NAME   # default: headless; use voice for a tool-free profile
 --dsh-cwd PATH       # working directory for the harness
 --dsh-timeout SEC    # default 50
 ```
@@ -236,8 +300,8 @@ These cost real debugging time; they are worth knowing if you fork this:
 - The relay holds the Deepgram key; the board only needs it for STT/TTS requests
   proxied through the relay.
 - Harness mode runs an agent with `--approval-policy never` on every spoken
-  question. Risky tool calls are denied, but read-only tools may inspect the
-  `--dsh-cwd` directory. Point it at a scratch directory if that matters.
+  question. The stock profile can read local files even in read-only mode; use
+  the tool-free `voice` profile above for anything voice-controlled.
 - Rotate any key that has ever been pasted into a chat, log, or screenshot.
 
 ## License
