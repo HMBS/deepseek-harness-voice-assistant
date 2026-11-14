@@ -1,0 +1,60 @@
+# Voice Gadget — a small purpose-built DeepSeek voice assistant for the
+# Waveshare ESP32-S3-Touch-AMOLED-2.16.
+#
+# Press BOOT, speak, release: the board records, sends the audio to a small
+# relay on the host for Deepgram speech-to-text, asks DeepSeek, and speaks the
+# answer back through Deepgram text-to-speech. No agent framework, no Lua, no
+# skill system — just one loop.
+
+CONFIG_IDF_TARGET="esp32s3"
+
+# PSRAM: the board has 8 MB octal. Audio buffers and TLS need it.
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=16384
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=32768
+
+# 16 MB flash, QIO.
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=240
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+# TLS for api.deepgram.com / api.deepseek.com
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE=y
+CONFIG_MBEDTLS_CERTIFICATE_BUNDLE_DEFAULT_FULL=y
+CONFIG_ESP_TLS_INSECURE=n
+# TLS working buffers live in PSRAM: internal RAM is too tight for them.
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=8192
+CONFIG_ESP_TLS_SKIP_SERVER_CERT_VERIFY=n
+
+# The USB-C port is the S3's own USB Serial/JTAG; the console must live there.
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+# CONFIG_ESP_CONSOLE_UART_DEFAULT is not set
+
+# Wi-Fi and lwIP buffers in PSRAM first, internal RAM when there is none.
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+CONFIG_LWIP_TCP_WND_DEFAULT=32768
+CONFIG_LWIP_TCP_SND_BUF_DEFAULT=32768
+CONFIG_LWIP_RECVMBOX_SIZE=32
+
+# Wi-Fi
+CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM=10
+CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM=32
+CONFIG_LWIP_MAX_SOCKETS=12
+
+# Logging: errors and warnings only by default, to keep the console readable.
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+CONFIG_LOG_DEFAULT_LEVEL=2
+# Larger type for the reply text on the 480x480 display.
+CONFIG_LV_FONT_MONTSERRAT_20=y
+CONFIG_LV_FONT_MONTSERRAT_28=y

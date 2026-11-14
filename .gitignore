@@ -1,0 +1,22 @@
+# ESP-IDF build output and generated config
+firmware/voice/build/
+firmware/voice/sdkconfig
+firmware/voice/sdkconfig.old
+firmware/voice/managed_components/
+
+# Local ESP-IDF checkout / toolchains used during development
+firmware/esp-idf/
+.toolchain/
+.venv/
+
+# Local credentials
+firmware/voice/main/secrets.h
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,36 @@
+idf_component_register(
+    SRCS
+        "main.c"
+        "audio.c"
+        "wifi.c"
+        "net.c"
+        "ui.c"
+        "config.c"
+        "mascot_idle.c"
+        "mascot_listening.c"
+        "mascot_thinking.c"
+        "mascot_speaking.c"
+    INCLUDE_DIRS
+        "."
+    REQUIRES
+        nvs_flash
+        esp_wifi
+        esp_netif
+        esp_event
+        esp_http_client
+        esp-tls
+        espressif__cjson
+        esp_lcd
+        driver
+        console
+        esp_codec_dev
+        esp_timer
+        lvgl
+        esp_lvgl_adapter
+        esp32_s3_touch_amoled_2_16
+    PRIV_REQUIRES
+        esp_psram
+        esp_system
+        esp_hw_support
+        vfs
+)
